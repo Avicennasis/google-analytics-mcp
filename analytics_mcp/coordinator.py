@@ -54,6 +54,16 @@ from analytics_mcp.tools.reporting.conversions import (
     run_conversions_report,
     _run_conversions_report_description,
 )
+from analytics_mcp.tools.reporting.audience_exports import (
+    create_audience_export,
+    get_audience_export,
+    list_audience_exports,
+    query_audience_export,
+)
+from analytics_mcp.tools.measurement import (
+    validate_event,
+    send_event,
+)
 
 run_report_with_description = FunctionTool(run_report)
 run_report_with_description.description = _run_report_description()
@@ -81,6 +91,12 @@ tools = [
     run_realtime_report_with_description,
     run_funnel_report_with_description,
     run_conversions_report_with_description,
+    FunctionTool(create_audience_export),
+    FunctionTool(get_audience_export),
+    FunctionTool(list_audience_exports),
+    FunctionTool(query_audience_export),
+    FunctionTool(validate_event),
+    FunctionTool(send_event),
 ]
 
 tool_map = {t.name: t for t in tools}
@@ -149,6 +165,18 @@ for tool in mcp_tools:
             "dimensions",
             "metrics",
             "conversion_spec",
+        ]
+    elif tool.name == "create_audience_export":
+        tool.inputSchema["required"] = [
+            "property_id",
+            "audience_id",
+            "dimensions",
+        ]
+    elif tool.name in ("validate_event", "send_event"):
+        tool.inputSchema["required"] = [
+            "measurement_id",
+            "client_id",
+            "events",
         ]
 
 
