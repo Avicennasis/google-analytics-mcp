@@ -21,7 +21,6 @@ server.
 # MCP Server Imports
 import json
 import sys
-from json import tool
 from mcp import types as mcp_types  # Use alias to avoid conflict
 from mcp.server.lowlevel import Server
 
@@ -186,7 +185,9 @@ async def list_tools() -> list[mcp_types.Tool]:
 
 
 @app.call_tool()
-async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
+async def call_mcp_tool(
+    name: str, arguments: dict
+) -> list[mcp_types.Content] | mcp_types.CallToolResult:
     if name in tool_map:
         tool = tool_map[name]
         try:
@@ -204,13 +205,21 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
                 f"MCP Server: Error executing ADK tool '{name}': {e}",
                 file=sys.stderr,
             )
-            # Return an error message in MCP format
+            # Return an error message in MCP format. isError=True so MCP
+            # clients can detect the failure programmatically instead of
+            # treating the error text as a successful response.
             error_text = json.dumps(
                 {"error": f"Failed to execute tool '{name}': {str(e)}"}
             )
-            return [mcp_types.TextContent(type="text", text=error_text)]
+            return mcp_types.CallToolResult(
+                content=[mcp_types.TextContent(type="text", text=error_text)],
+                isError=True,
+            )
 
     error_text = json.dumps(
         {"error": f"Tool '{name}' not implemented by this server."}
     )
-    return [mcp_types.TextContent(type="text", text=error_text)]
+    return mcp_types.CallToolResult(
+        content=[mcp_types.TextContent(type="text", text=error_text)],
+        isError=True,
+    )

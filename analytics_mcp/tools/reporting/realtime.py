@@ -153,9 +153,9 @@ async def run_realtime_report(
             data_v1beta.OrderBy(order_by) for order_by in order_bys
         ]
 
-    if limit:
+    if limit is not None:
         request.limit = limit
-    if offset:
+    if offset is not None:
         request.offset = offset
 
     def _sync_call():

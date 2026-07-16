@@ -198,10 +198,10 @@ async def query_audience_export(
         name=_construct_audience_export_rn(property_id, audience_export)
     )
 
-    if offset:
+    if offset is not None:
         request.offset = offset
 
-    if limit:
+    if limit is not None:
         request.limit = limit
 
     def _sync_call():

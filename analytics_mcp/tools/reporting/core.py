@@ -161,11 +161,11 @@ async def run_report(
             data_v1beta.OrderBy(order_by) for order_by in order_bys
         ]
 
-    if limit:
+    if limit is not None:
         request.limit = limit
-    if offset:
+    if offset is not None:
         request.offset = offset
-    if currency_code:
+    if currency_code is not None:
         request.currency_code = currency_code
 
     def _sync_call():
