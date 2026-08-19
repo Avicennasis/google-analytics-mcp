@@ -63,6 +63,13 @@ from analytics_mcp.tools.measurement import (
     validate_event,
     send_event,
 )
+from analytics_mcp.tools.reporting.compatibility import check_compatibility
+from analytics_mcp.tools.reporting.pivot import (
+    run_pivot_report,
+    _run_pivot_report_description,
+    batch_run_pivot_reports,
+    _batch_run_pivot_reports_description,
+)
 
 run_report_with_description = FunctionTool(run_report)
 run_report_with_description.description = _run_report_description()
@@ -80,7 +87,17 @@ run_conversions_report_with_description.description = (
 )
 
 # Instantiate the ADK tools
+run_pivot_report_with_description = FunctionTool(run_pivot_report)
+run_pivot_report_with_description.description = _run_pivot_report_description()
+batch_run_pivot_reports_with_description = FunctionTool(batch_run_pivot_reports)
+batch_run_pivot_reports_with_description.description = (
+    _batch_run_pivot_reports_description()
+)
+
 tools = [
+    FunctionTool(check_compatibility),
+    run_pivot_report_with_description,
+    batch_run_pivot_reports_with_description,
     FunctionTool(get_account_summaries),
     FunctionTool(list_google_ads_links),
     FunctionTool(get_property_details),
@@ -154,6 +171,21 @@ for tool in mcp_tools:
             "date_ranges",
             "dimensions",
             "metrics",
+        ]
+    elif tool.name == "check_compatibility":
+        tool.inputSchema["required"] = ["property_id"]
+    elif tool.name == "run_pivot_report":
+        tool.inputSchema["required"] = [
+            "property_id",
+            "date_ranges",
+            "dimensions",
+            "metrics",
+            "pivots",
+        ]
+    elif tool.name == "batch_run_pivot_reports":
+        tool.inputSchema["required"] = [
+            "property_id",
+            "requests",
         ]
     elif tool.name == "run_realtime_report":
         tool.inputSchema["required"] = ["property_id", "dimensions", "metrics"]
