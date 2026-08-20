@@ -63,6 +63,10 @@ from analytics_mcp.tools.measurement import (
     validate_event,
     send_event,
 )
+from analytics_mcp.tools.reporting.batch import (
+    batch_run_reports,
+    _batch_run_reports_description,
+)
 from analytics_mcp.tools.reporting.compatibility import check_compatibility
 from analytics_mcp.tools.reporting.pivot import (
     run_pivot_report,
@@ -94,7 +98,13 @@ batch_run_pivot_reports_with_description.description = (
     _batch_run_pivot_reports_description()
 )
 
+batch_run_reports_with_description = FunctionTool(batch_run_reports)
+batch_run_reports_with_description.description = (
+    _batch_run_reports_description()
+)
+
 tools = [
+    batch_run_reports_with_description,
     FunctionTool(check_compatibility),
     run_pivot_report_with_description,
     batch_run_pivot_reports_with_description,
@@ -171,6 +181,11 @@ for tool in mcp_tools:
             "date_ranges",
             "dimensions",
             "metrics",
+        ]
+    elif tool.name == "batch_run_reports":
+        tool.inputSchema["required"] = [
+            "property_id",
+            "requests",
         ]
     elif tool.name == "check_compatibility":
         tool.inputSchema["required"] = ["property_id"]
