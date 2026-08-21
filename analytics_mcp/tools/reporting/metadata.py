@@ -492,10 +492,13 @@ async def get_metadata(property_id: int | str) -> Dict[str, Any]:
           - A string consisting of 'properties/' followed by a number
     """
 
+    # Validate the property ID before building the client: constructing the
+    # client requires credentials, so doing it first turns an invalid ID into
+    # a DefaultCredentialsError instead of the documented ValueError.
+    metadata_rn = f"{construct_property_rn(property_id)}/metadata"
+
     def _sync_call():
-        return create_data_api_client().get_metadata(
-            name=f"{construct_property_rn(property_id)}/metadata"
-        )
+        return create_data_api_client().get_metadata(name=metadata_rn)
 
     metadata = await asyncio.to_thread(_sync_call)
     return proto_to_dict(metadata)
@@ -513,10 +516,13 @@ async def get_custom_dimensions_and_metrics(
 
     """
 
+    # Validate the property ID before building the client: constructing the
+    # client requires credentials, so doing it first turns an invalid ID into
+    # a DefaultCredentialsError instead of the documented ValueError.
+    metadata_rn = f"{construct_property_rn(property_id)}/metadata"
+
     def _sync_call():
-        return create_data_api_client().get_metadata(
-            name=f"{construct_property_rn(property_id)}/metadata"
-        )
+        return create_data_api_client().get_metadata(name=metadata_rn)
 
     metadata = await asyncio.to_thread(_sync_call)
     custom_metrics = [
