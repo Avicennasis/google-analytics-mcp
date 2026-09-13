@@ -55,6 +55,13 @@ _READ_ONLY_ANALYTICS_SCOPE = (
 _client_lock = threading.Lock()
 _CREDENTIALS = None
 
+# Cached API clients. gRPC clients are thread-safe and expensive to build
+# (channel setup), so create each once and reuse it (FR-178).
+_ADMIN_API_CLIENT = None
+_DATA_API_CLIENT = None
+_ADMIN_ALPHA_API_CLIENT = None
+_DATA_ALPHA_API_CLIENT = None
+
 
 @contextlib.contextmanager
 def prevent_stdio_inheritance():
@@ -87,34 +94,46 @@ def _get_credentials():
 
 
 def create_admin_api_client() -> admin_v1beta.AnalyticsAdminServiceClient:
-    """Returns the Google Analytics Admin API client."""
+    """Returns the Google Analytics Admin API client (cached)."""
+    global _ADMIN_API_CLIENT
     with _client_lock:
-        return admin_v1beta.AnalyticsAdminServiceClient(
-            client_info=_CLIENT_INFO, credentials=_get_credentials()
-        )
+        if _ADMIN_API_CLIENT is None:
+            _ADMIN_API_CLIENT = admin_v1beta.AnalyticsAdminServiceClient(
+                client_info=_CLIENT_INFO, credentials=_get_credentials()
+            )
+        return _ADMIN_API_CLIENT
 
 
 def create_data_api_client() -> data_v1beta.BetaAnalyticsDataClient:
-    """Returns the Google Analytics Data API client."""
+    """Returns the Google Analytics Data API client (cached)."""
+    global _DATA_API_CLIENT
     with _client_lock:
-        return data_v1beta.BetaAnalyticsDataClient(
-            client_info=_CLIENT_INFO, credentials=_get_credentials()
-        )
+        if _DATA_API_CLIENT is None:
+            _DATA_API_CLIENT = data_v1beta.BetaAnalyticsDataClient(
+                client_info=_CLIENT_INFO, credentials=_get_credentials()
+            )
+        return _DATA_API_CLIENT
 
 
 def create_admin_alpha_api_client() -> (
     admin_v1alpha.AnalyticsAdminServiceClient
 ):
-    """Returns the Google Analytics Admin API (alpha) client."""
+    """Returns the Google Analytics Admin API (alpha) client (cached)."""
+    global _ADMIN_ALPHA_API_CLIENT
     with _client_lock:
-        return admin_v1alpha.AnalyticsAdminServiceClient(
-            client_info=_CLIENT_INFO, credentials=_get_credentials()
-        )
+        if _ADMIN_ALPHA_API_CLIENT is None:
+            _ADMIN_ALPHA_API_CLIENT = admin_v1alpha.AnalyticsAdminServiceClient(
+                client_info=_CLIENT_INFO, credentials=_get_credentials()
+            )
+        return _ADMIN_ALPHA_API_CLIENT
 
 
 def create_data_api_alpha_client() -> data_v1alpha.AlphaAnalyticsDataClient:
-    """Returns the Google Analytics Data API (Alpha) client."""
+    """Returns the Google Analytics Data API (Alpha) client (cached)."""
+    global _DATA_ALPHA_API_CLIENT
     with _client_lock:
-        return data_v1alpha.AlphaAnalyticsDataClient(
-            client_info=_CLIENT_INFO, credentials=_get_credentials()
-        )
+        if _DATA_ALPHA_API_CLIENT is None:
+            _DATA_ALPHA_API_CLIENT = data_v1alpha.AlphaAnalyticsDataClient(
+                client_info=_CLIENT_INFO, credentials=_get_credentials()
+            )
+        return _DATA_ALPHA_API_CLIENT
