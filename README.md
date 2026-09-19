@@ -25,25 +25,49 @@ and
 to provide several
 [Tools](https://modelcontextprotocol.io/docs/concepts/tools) for use with LLMs.
 
-### Retrieve account and property information 🟠
+### Account and property information 🟠
 
-- `get_account_summaries`: Retrieves information about the user's Google
-  Analytics accounts and properties.
-- `get_property_details`: Returns details about a property.
-- `list_google_ads_links`: Returns a list of links to Google Ads accounts for
-  a property.
+- `get_account_summaries` — Google Analytics accounts and their properties.
+- `get_property_details` — details about a property.
+- `list_properties` — properties the user can access.
+- `list_google_ads_links` — Google Ads links for a property.
+- `get_data_retention_settings` — data-retention settings for a property.
+- `list_property_annotations` — annotations on a property.
+- `get_property_quotas` — quota usage for a property.
+- `list_data_streams` — data streams for a property.
 
-### Run core reports 📙
+### Configuration and metadata 🗂️
 
-- `run_report`: Runs a Google Analytics report using the Data API.
-- `run_funnel_report`: Runs a Google Analytics funnel report using the Data API.
-- `get_custom_dimensions_and_metrics`: Retrieves the custom dimensions and
-  metrics for a specific property.
+- `get_custom_dimensions_and_metrics` — custom dimensions and metrics.
+- `list_custom_dimensions` — custom dimensions for a property.
+- `list_custom_metrics` — custom metrics for a property.
+- `list_key_events` — key events (conversions).
+- `list_audiences` — audiences defined on a property.
+- `get_metadata` — available dimensions and metrics.
+- `check_compatibility` — dimension/metric compatibility.
 
-### Run realtime reports ⏳
+### Reports 📙
 
-- `run_realtime_report`: Runs a Google Analytics realtime report using the
-  Data API.
+- `run_report` — run a Data API report.
+- `run_realtime_report` — run a realtime report.
+- `run_funnel_report` — run a funnel report.
+- `run_conversions_report` — run a conversions report.
+- `run_access_report` — run an access/entitlement report.
+- `run_pivot_report` — run a pivot report.
+- `batch_run_reports` — run several reports in one call.
+- `batch_run_pivot_reports` — run several pivot reports in one call.
+
+### Audience exports 📤
+
+- `create_audience_export` — create an audience export.
+- `get_audience_export` — get an audience export's status.
+- `list_audience_exports` — list a property's audience exports.
+- `query_audience_export` — query a completed audience export.
+
+### Measurement Protocol (write) ✍️
+
+- `validate_event` — validate a Measurement Protocol event.
+- `send_event` — send a Measurement Protocol event.
 
 ## Setup instructions 🔧
 
@@ -141,7 +165,7 @@ Credentials saved to file: [PATH_TO_CREDENTIALS_JSON]
           "args": ["run", "analytics-mcp"],
           "env": {
             "GOOGLE_APPLICATION_CREDENTIALS": "PATH_TO_CREDENTIALS_JSON",
-            "GOOGLE_PROJECT_ID": "YOUR_PROJECT_ID"
+            "GOOGLE_CLOUD_PROJECT": "YOUR_PROJECT_ID"
           }
         }
       }
@@ -161,9 +185,30 @@ Credentials saved to file: [PATH_TO_CREDENTIALS_JSON]
     claude mcp add analytics-mcp \
       --scope user \
       -e "GOOGLE_APPLICATION_CREDENTIALS=PATH_TO_CREDENTIALS_JSON" \
-      -e "GOOGLE_PROJECT_ID=YOUR_PROJECT_ID" \
+      -e "GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID" \
       -- pipx run analytics-mcp
     ```
+
+### Configure other MCP clients
+
+Any MCP client that supports stdio servers works — Cursor, Windsurf, VS Code
+Copilot, Claude Desktop, and others. Use the same JSON shape as the Gemini
+example, adapting it to your client's config file:
+
+```json
+{
+  "mcpServers": {
+    "analytics-mcp": {
+      "command": "pipx",
+      "args": ["run", "analytics-mcp"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "PATH_TO_CREDENTIALS_JSON",
+        "GOOGLE_CLOUD_PROJECT": "YOUR_PROJECT_ID"
+      }
+    }
+  }
+}
+```
 
 ## Try it out 🥼
 
