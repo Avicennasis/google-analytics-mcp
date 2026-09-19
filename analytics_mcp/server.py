@@ -56,8 +56,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nMCP Server (stdio) stopped by user.", file=sys.stderr)
     except Exception:
-        import traceback
-
         print("MCP Server (stdio) encountered an error:", file=sys.stderr)
         traceback.print_exc()
     finally:
