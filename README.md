@@ -33,6 +33,8 @@ to provide several
 - `list_google_ads_links` — Google Ads links for a property.
 - `get_data_retention_settings` — data-retention settings for a property.
 - `list_property_annotations` — annotations on a property.
+- `create_property_annotation` — creates an annotation (requires the
+  `--allow-write` flag and the `analytics.edit` scope).
 - `get_property_quotas` — quota usage for a property.
 - `list_data_streams` — data streams for a property.
 
@@ -108,6 +110,13 @@ Credentials must include the Google Analytics read-only scope:
 https://www.googleapis.com/auth/analytics.readonly
 ```
 
+If you plan to enable write tools (such as `create_property_annotation`) using
+the `--allow-write` flag, your credentials must also include the edit scope:
+
+```
+https://www.googleapis.com/auth/analytics.edit
+```
+
 Check out
 [Manage OAuth Clients](https://support.google.com/cloud/answer/15549257)
 for how to create an OAuth client.
@@ -171,6 +180,9 @@ Credentials saved to file: [PATH_TO_CREDENTIALS_JSON]
       }
     }
     ```
+
+    To enable write tools (e.g. `create_property_annotation`), append
+    `"--allow-write"` to `"args"`: `["run", "analytics-mcp", "--allow-write"]`.
 
 ### Configure Claude Code
 
