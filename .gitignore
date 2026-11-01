@@ -68,3 +68,5 @@ pylintrc.test
 
 .agents/skills
 .stargazer-*
+# uv lockfile from local `uv sync` (upstream ships without a lock)
+uv.lock
